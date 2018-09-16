@@ -1,13 +1,16 @@
+#ifndef __BRIDGET_PACKET_H__
+#define __BRIDGET_PACKET_H__
+
+
 #pragma once
 
 /*
 This structure defines the packet sent over the Named Pipe IPC connection to the Fly Client app.
 */
 
-
-#pragma pack(show)
+//#pragma pack(show)
 #pragma pack(push, r1, 2)
-#pragma pack(show)
+//#pragma pack(show)
 struct BridgePacket {
 	int alt_msl;
 	int alt_agl;
@@ -41,7 +44,7 @@ struct BridgePacket {
 	int fps;
 };
 #pragma pack(pop, r1)
-#pragma pack(show)
+//#pragma pack(show)
 
 
-
+#endif // __BRIDGET_PACKET_H__
