@@ -167,6 +167,7 @@
     <ClInclude Include="XPHooks.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BridgePacket.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
