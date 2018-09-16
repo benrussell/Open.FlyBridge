@@ -48,18 +48,18 @@ private:
 
 	static XPLMDataRef m_drFRP;
 
-
-
 	static void build_packet( BridgePacket &packet );
 
+
+	static int m_iLastWoWFlag;
+	static float m_fLastWowFlag_TimeStamp;
+	static const float m_fLastWowFlag_TimeDelay;
+	static int m_iVerticalLandingSpeed;
 
 
 public:
 
 	static void init_drefs();
-
-	static void open_ipc_pipe();
-	static void close_ipc_pipe();
 
 
 	static float cb_FlightLoop_1hz(
@@ -68,6 +68,15 @@ public:
 		int                  inCounter,
 		void *               inRefcon
 	);
+
+
+	static float cb_FlightLoop_HighSpeedTriggers(
+		float                inElapsedSinceLastCall,
+		float                inElapsedTimeSinceLastFlightLoop,
+		int                  inCounter,
+		void *               inRefcon
+	);
+
 
 
 };

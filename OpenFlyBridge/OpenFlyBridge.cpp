@@ -7,6 +7,17 @@
 
 #include "BridgePacket.h"
 
+#include <XPLMProcessing.h>
+
+
+// Last WoW flag value. Used for edge detection in HighSpeed FLCB.
+int OpenFlyBridge::m_iLastWoWFlag = 0;
+
+float OpenFlyBridge::m_fLastWowFlag_TimeStamp=0.f;
+const float OpenFlyBridge::m_fLastWowFlag_TimeDelay=5.f;
+
+int OpenFlyBridge::m_iVerticalLandingSpeed = 0;
+
 
 
 NamedPipe OpenFlyBridge::m_IPCPipe;
@@ -107,39 +118,93 @@ void OpenFlyBridge::init_drefs(){
 }
 
 
-void OpenFlyBridge::open_ipc_pipe()
-{
-
-	XPLMDebugString("ofb: Opening IPC Pipe..\n");
-	m_IPCPipe.open_pipe(); //FIXME: error detection.
-
-}
-
-void OpenFlyBridge::close_ipc_pipe()
-{
-	XPLMDebugString("ofb: Closing IPC Pipe..\n");
-	m_IPCPipe.close_pipe();
-}
 
 float OpenFlyBridge::cb_FlightLoop_1hz(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop, int inCounter, void * inRefcon)
 {
 
 	//XPLMDebugString("ofb: cb_FlightLoop_1hz()\n");
+
+#if 1
+	if (XPLMGetDatai(m_drIsPaused)) {
+		// If paused, send no packets?
+		return 1.0f;
+	}
+#endif
 		
+	// Packet handler functions will pull in the packet var by-ref.
 	BridgePacket packet;
 	build_packet( packet );
-
 	m_IPCPipe.write_packet( packet );
 	
 
 	return 1.0f;
 }
 
+float OpenFlyBridge::cb_FlightLoop_HighSpeedTriggers(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop, int inCounter, void * inRefcon)
+{
+
+	char caDbg[1024];
+
+	// Watch the WoW flag and the landing speed. If the WoW flag changes we take action.
+
+	int iWoWAny = XPLMGetDatai(m_drOnGround);
+	if (m_iLastWoWFlag != iWoWAny) {
+
+		//Calculate and enforce a minimum time window for WoW detection.
+		//This is essentially a crude bump-landing filter.
+		const float fNow = XPLMGetElapsedTime();
+		const float fTsDelta = fNow - m_fLastWowFlag_TimeStamp;
+
+		const float fTsRemains = m_fLastWowFlag_TimeDelay - fTsDelta;
+		if (fTsDelta >= m_fLastWowFlag_TimeDelay) {
+
+			if (iWoWAny) {
+				// Rising edge. Weight is newly on wheels.
+				XPLMDebugString("ofb: WoW rising-edge.\n");
+
+				//Save the vertical speed when we hit the deck.
+				OpenFlyBridge::m_iVerticalLandingSpeed = (int)XPLMGetDataf(m_drVerticalSpeed);
+
+
+				//Set a timestamp to use for filtering out bump events.
+				XPLMDebugString("ofb: Set LandingVS WindowTS.\n");
+				m_fLastWowFlag_TimeStamp = fNow;
+
+			} else {
+				// Falling edge. Weight is now off wheels.
+				XPLMDebugString("ofb: WoW falling-edge.\n");
+
+				//Reset the vertical landing speed to 0.
+				OpenFlyBridge::m_iVerticalLandingSpeed = 0;
+
+			}
+
+
+			// Save value for next frame.
+			// This is time-filter protected.
+			m_iLastWoWFlag = iWoWAny;
+
+		} else {
+			// Filter out bump events.
+			snprintf(caDbg, 1024, "ofb: WoW BUMP!: remaining:%0.3f\n", fTsRemains);
+			XPLMDebugString(caDbg);
+
+		} //time filter.
+
+	} // WoW flag change filter.
+
+
+	// Slew mode logic?...
+
+
+	return -1.0f; //every frame thanks.
+}
+
 
 
 void OpenFlyBridge::build_packet( BridgePacket &packet ) {
 
-	char caDbg[1024];
+	//char caDbg[1024];
 	//XPLMDebugString("ofb: build_packet()\n");
 	
 	packet.alt_msl = (int)XPLMGetDataf(m_drAltMsl);
@@ -155,7 +220,7 @@ void OpenFlyBridge::build_packet( BridgePacket &packet ) {
 	packet.lon = XPLMGetDatad(m_drLon);
 
 	packet.vs = (int)XPLMGetDataf(m_drVerticalSpeed);
-	packet.vs_landing = 11; //FIXME: Calculate when we get new WoW rising edge flag?
+	packet.vs_landing = OpenFlyBridge::m_iVerticalLandingSpeed; // This is calculated in the HighSpeed FLCB
 
 	packet.g_force = (int)(XPLMGetDataf(m_drGForce) * 1000.f); //scale by 1000 to pack into an int value.....
 
