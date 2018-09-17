@@ -13,7 +13,7 @@ PLUGIN_API int XPluginStart(
 
 	strcpy_s(outName, 128, "Open.FlyBridge");
 	strcpy_s(outSig, 128, "open.flybridge");
-	strcpy_s(outDesc, 128, "Open.FlyBridge v18.09.14.1952 beta, (C) br@x-plugins.com");
+	strcpy_s(outDesc, 128, "Open.FlyBridge v18.09.17.1347 beta, (C) br@x-plugins.com");
 
 	// Confirm we're running by echoing the outDesc string to the log file.
 	char caDbg[1024];

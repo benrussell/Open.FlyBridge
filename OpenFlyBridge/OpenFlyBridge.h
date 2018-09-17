@@ -40,7 +40,7 @@ private:
 	static XPLMDataRef m_drTransponderCode;
 
 	static XPLMDataRef m_drOnGround;
-	static XPLMDataRef m_drIsSlew;
+	//static XPLMDataRef m_drIsSlew;
 	static XPLMDataRef m_drIsPaused;
 	
 	static XPLMDataRef m_drPitch;

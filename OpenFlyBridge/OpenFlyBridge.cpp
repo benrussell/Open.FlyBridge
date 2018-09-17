@@ -44,7 +44,7 @@ XPLMDataRef OpenFlyBridge::m_drFuelTotal;
 XPLMDataRef OpenFlyBridge::m_drTransponderCode;
 
 XPLMDataRef OpenFlyBridge::m_drOnGround;
-XPLMDataRef OpenFlyBridge::m_drIsSlew;
+//XPLMDataRef OpenFlyBridge::m_drIsSlew;
 XPLMDataRef OpenFlyBridge::m_drIsPaused;
 
 XPLMDataRef OpenFlyBridge::m_drPitch;
@@ -105,7 +105,7 @@ void OpenFlyBridge::init_drefs(){
 
 	m_drOnGround = XPLMFindDataRef("sim/flightmodel/failures/onground_any");
 
-	m_drIsSlew = XPLMFindDataRef(""); //slew <------------------------------------------ FIXME: Camera mode?
+	//m_drIsSlew = XPLMFindDataRef(""); //slew <------------------------------------------ FIXME: Camera mode?
 
 	m_drIsPaused = XPLMFindDataRef("sim/time/paused");
 
