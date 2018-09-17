@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenFlyBridge", "OpenFlyBri
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0AC33BCD-3123-499D-9016-2CDA2BDD13EC}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
 		ReadMe.txt = ReadMe.txt
 	EndProjectSection
 EndProject

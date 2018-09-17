@@ -7,3 +7,7 @@ Installation:
 1. Delete X-Plane/resources/plugins/projectFLY
 2. Download and extract the latest plugin from the Releases tab here on github.
 3. Move the Open.FlyBridge folder into X-Plane/resources/plugins/ folder.
+
+
+For the story on how and why this plugin was created please see:
+http://blog.x-plugins.com/2018/09/projectfly-bridge-plugin-rewrite.html
